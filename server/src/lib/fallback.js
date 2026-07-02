@@ -1,11 +1,10 @@
 import { readFileSync } from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { berlinToday, formatDisplayDate } from './berlinDate.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const versesPath = path.join(__dirname, '..', '..', 'data', 'verses.json');
-const verses = JSON.parse(readFileSync(versesPath, 'utf-8'));
+// new URL(..., import.meta.url) statt path.join(__dirname, ...): dieses Muster
+// erkennt Vercels Bundler (@vercel/nft) und packt die JSON-Datei mit ins Deployment.
+const versesUrl = new URL('../../data/verses.json', import.meta.url);
+const verses = JSON.parse(readFileSync(versesUrl, 'utf-8'));
 
 export function getFallback(type) {
   const list = type === 'mittag' ? verses.mittag_fallback : verses.abend_fallback;

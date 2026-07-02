@@ -92,3 +92,13 @@ cd client && npm install && npm run dev
 npm run build              # baut client/dist
 npm start                   # startet den Server, der client/dist automatisch mitausliefert
 ```
+
+## Deployment auf Vercel
+
+Das Repo ist für Vercel vorkonfiguriert (`vercel.json`):
+
+- **Frontend:** `buildCommand` installiert die Client-Dependencies und baut nach `client/dist` (Output Directory).
+- **Backend:** Die Express-App ist von `listen()` getrennt (`server/src/app.js`) und wird über `api/index.js` als Serverless Function exportiert; ein Rewrite leitet alle `/api/*`-Requests dorthin. Die Server-Dependencies (express, cheerio, cors) stehen dafür auch im Root-`package.json`, damit Vercels Bundler sie auflösen kann.
+- Der In-Memory-Cache gilt pro warmgehaltener Function-Instanz – für den privaten Gebrauch völlig ausreichend, im Kaltstart wird einfach neu gefetcht.
+
+Einfach das GitHub-Repo in Vercel importieren, keine weiteren Einstellungen nötig. Hinweis: Das Deployment sollte privat bleiben (Losungen-Nutzungsbedingungen, siehe Lizenzhinweis oben).
