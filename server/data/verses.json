@@ -1,0 +1,62 @@
+{
+  "mittag_fallback": [
+    {
+      "text": "Am siebten Tag darf auch die Seele ruhen. Mitten am Tag ein Innehalten, ein Blick zum Licht.",
+      "reference": "frei nach 1. Mose 2"
+    },
+    {
+      "text": "Wer sich dem Licht zuwendet, muss den Schatten nicht fürchten. Richte dich neu aus.",
+      "reference": "frei nach Psalm 27"
+    },
+    {
+      "text": "Ein kleines Licht in dunkler Zeit verliert sich nicht, es zeigt den Weg.",
+      "reference": "frei nach Johannes 1"
+    },
+    {
+      "text": "Was du heute trägst, darfst du für einen Atemzug ablegen. Es wird gehalten.",
+      "reference": "frei nach Matthäus 11"
+    },
+    {
+      "text": "Mitten im Tag ein offenes Fenster: Licht fällt auch dort hinein, wo du es nicht erwartest.",
+      "reference": "frei nach Jesaja 60"
+    },
+    {
+      "text": "Richte deinen Blick für einen Moment nach oben. Die Sonne kennt keine Eile und keinen Stillstand.",
+      "reference": "frei nach Psalm 121"
+    },
+    {
+      "text": "Am Ende der Woche ein Aufatmen: Das Licht, das dich trägt, war die ganze Zeit schon da.",
+      "reference": "frei nach Psalm 4"
+    }
+  ],
+  "abend_fallback": [
+    {
+      "text": "Am Ende des Tages darf die Seele zur Ruhe kommen. Was ungetan blieb, bleibt in guten Händen.",
+      "reference": "frei nach Psalm 4"
+    },
+    {
+      "text": "In der Stille des Abends ist ein Schutz, der nicht schläft und nicht müde wird.",
+      "reference": "frei nach Psalm 121"
+    },
+    {
+      "text": "Leg ab, was schwer war. Die Nacht ist ein sicherer Ort zum Landen.",
+      "reference": "frei nach Matthäus 11"
+    },
+    {
+      "text": "Wo Sorge war, darf jetzt Vertrauen sein. Du musst diese Nacht nichts mehr allein tragen.",
+      "reference": "frei nach 1. Petrus 5"
+    },
+    {
+      "text": "Der Abend bringt keine Antworten, aber er bringt Ruhe. Das genügt für heute.",
+      "reference": "frei nach Psalm 23"
+    },
+    {
+      "text": "Unter einem weiten Himmel bist du gehalten, auch wenn du die Hand nicht siehst, die trägt.",
+      "reference": "frei nach Psalm 91"
+    },
+    {
+      "text": "Am Ende der Woche ein stiller Dank: Was war, darf bleiben. Was fehlt, darf kommen.",
+      "reference": "frei nach Psalm 90"
+    }
+  ]
+}
