@@ -60,9 +60,12 @@ body {
   /* Verblasst zum eigenen Farbton mit Alpha 0 (--glow-fade), nicht zu "transparent"
      (= Schwarz mit Alpha 0) – sonst entsteht unterwegs eine gräuliche Zwischenzone.
      Ganz bewusst ohne exotische Gradient-Syntax: nur breit unterstützte rgba-Stops,
-     damit der Verlauf in jedem Browser gleich aussieht. Maßvolle Größe, damit die
-     Wärme ein Akzent bleibt statt den ganzen Bildschirm einzufärben. */
-  background: radial-gradient(ellipse 65% 50% at 50% 36%, var(--glow-core) 0%, var(--glow-warm) 38%, var(--glow-fade) 75%),
+     damit der Verlauf in jedem Browser gleich aussieht.
+     Fester Pixel-Radius statt Prozent: Prozentangaben bei radial-gradient beziehen
+     sich auf die Box-Maße (body = min-height:100vh) – auf einem hohen Handy-Screen
+     wurde "50% Höhe" so zu einem riesigen Radius und hat fast den ganzen Bildschirm
+     eingefärbt statt nur einen Akzent um die Kerze zu bilden. */
+  background: radial-gradient(circle 320px at 50% 36%, var(--glow-core) 0%, var(--glow-warm) 35%, var(--glow-fade) 78%),
     radial-gradient(ellipse 120% 90% at 50% 100%, var(--bg-mid), var(--bg-deep));
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
