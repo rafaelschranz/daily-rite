@@ -36,14 +36,24 @@
 
 .candle-glow {
   position: absolute;
-  width: 240px;
-  height: 240px;
+  width: 260px;
+  height: 260px;
   border-radius: 50%;
-  top: -50px;
+  top: -58px;
   left: 50%;
   transform: translateX(-50%);
+  /* Fallback für Browser ohne "in oklch"-Interpolation (siehe unten). */
   background: radial-gradient(circle, var(--glow-warm) 0%, transparent 70%);
-  filter: blur(2px);
+  /* oklch statt sRGB interpolieren, sonst entsteht auf dem Weg zu "transparent" eine
+     leicht gräuliche Zwischenzone; mehr Zwischenstops machen den Verlauf gleichmäßiger. */
+  background: radial-gradient(
+    circle in oklch,
+    var(--glow-core) 0%,
+    var(--glow-warm) 30%,
+    color-mix(in oklch, var(--glow-warm) 45%, transparent) 55%,
+    transparent 78%
+  );
+  filter: blur(3px);
   transition: opacity 1.2s ease;
   pointer-events: none;
 }

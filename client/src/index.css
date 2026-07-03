@@ -2,6 +2,7 @@
   --bg-deep: #0d0f16;
   --bg-mid: #171b28;
   --glow-warm: rgba(244, 193, 122, 0.09);
+  --glow-core: rgba(244, 193, 122, 0.16);
   --flame-core: #ffe3ab;
   --flame-mid: #f7b955;
   --flame-outer: #d97b3f;
@@ -20,11 +21,13 @@
 /* Tageszeit-Stimmung: morgens ein Hauch Dämmerungswärme, abends tiefer ins Nachtblau. */
 :root[data-mode='morgen'] {
   --glow-warm: rgba(244, 172, 122, 0.13);
+  --glow-core: rgba(244, 172, 122, 0.22);
   --bg-mid: #1d1a27;
 }
 
 :root[data-mode='abend'] {
   --glow-warm: rgba(244, 193, 122, 0.07);
+  --glow-core: rgba(244, 193, 122, 0.12);
   --bg-deep: #0a0c12;
   --bg-mid: #121623;
 }
@@ -47,7 +50,12 @@ body {
   margin: 0;
   font-family: 'Inter', system-ui, sans-serif;
   color: var(--text-primary);
-  background: radial-gradient(ellipse 70% 55% at 50% 38%, var(--glow-warm), transparent 60%), radial-gradient(ellipse 120% 90% at 50% 100%, var(--bg-mid), var(--bg-deep));
+  /* Fallback für Browser ohne "in oklch"-Interpolation (siehe unten). */
+  background: radial-gradient(ellipse 75% 60% at 50% 36%, var(--glow-warm), transparent 68%), radial-gradient(ellipse 120% 90% at 50% 100%, var(--bg-mid), var(--bg-deep));
+  /* oklch statt sRGB interpolieren, sonst entsteht auf dem Weg zu "transparent" eine
+     leicht gräuliche Zwischenzone; zusätzliche Zwischenstops machen den Schein weicher. */
+  background: radial-gradient(ellipse 75% 60% at 50% 36% in oklch, var(--glow-core) 0%, var(--glow-warm) 32%, transparent 68%),
+    radial-gradient(ellipse 120% 90% at 50% 100% in oklch, var(--bg-mid), var(--bg-deep));
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
 }
