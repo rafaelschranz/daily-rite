@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { BellIcon, BellOffIcon, MusicIcon, MusicOffIcon } from './icons.jsx';
 
 export default function Controls({
@@ -8,11 +9,14 @@ export default function Controls({
   onReset,
   bellMuted,
   onToggleBell,
-  chantMuted,
-  onToggleChant,
   chantVolume,
   onChantVolume,
 }) {
+  // Der Regler ist standardmäßig ausgeblendet – ein schlichteres Bild während
+  // der Gebetszeit. Ein Klick aufs Lautstärke-Icon blendet ihn kurz ein.
+  const [volumeOpen, setVolumeOpen] = useState(false);
+  const chantMuted = chantVolume === 0;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
       <div style={{ display: 'flex', gap: 12 }}>
@@ -31,7 +35,7 @@ export default function Controls({
           </button>
         )}
       </div>
-      <div style={{ display: 'flex', gap: 10 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <button
           type="button"
           className="btn btn-icon"
@@ -45,14 +49,14 @@ export default function Controls({
         <button
           type="button"
           className="btn btn-icon"
-          onClick={onToggleChant}
-          aria-pressed={!chantMuted}
-          aria-label={chantMuted ? 'Gesang einschalten' : 'Gesang stummschalten'}
-          title={chantMuted ? 'Gesang einschalten' : 'Gesang stummschalten'}
+          onClick={() => setVolumeOpen((open) => !open)}
+          aria-expanded={volumeOpen}
+          aria-label="Lautstärke des Gesangs"
+          title="Lautstärke des Gesangs"
         >
           {chantMuted ? <MusicOffIcon /> : <MusicIcon />}
         </button>
-        {!chantMuted && (
+        {volumeOpen && (
           <input
             type="range"
             className="volume-slider"
@@ -62,7 +66,6 @@ export default function Controls({
             value={chantVolume}
             onChange={(event) => onChantVolume(Number(event.target.value))}
             aria-label="Lautstärke des Gesangs"
-            title="Lautstärke des Gesangs"
           />
         )}
       </div>

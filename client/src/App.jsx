@@ -34,7 +34,6 @@ export default function App() {
   const [mode, setMode] = useState(() => loadJSON('lastMode', suggestMode()));
   const [chantId, setChantId] = useState(() => loadJSON('chantId', weekdayChantId()));
   const [bellMuted, setBellMuted] = useState(() => loadJSON('muteBell', false));
-  const [chantMuted, setChantMuted] = useState(() => loadJSON('muteChant', false));
   const [chantVolume, setChantVolume] = useState(() => loadJSON('chantVolume', 35));
   const [silenceMin, setSilenceMin] = useState(() => loadJSON('silenceMin', 3));
   const [needsTap, setNeedsTap] = useState(false);
@@ -63,7 +62,6 @@ export default function App() {
   useEffect(() => saveJSON('lastMode', mode), [mode]);
   useEffect(() => saveJSON('chantId', chantId), [chantId]);
   useEffect(() => saveJSON('muteBell', bellMuted), [bellMuted]);
-  useEffect(() => saveJSON('muteChant', chantMuted), [chantMuted]);
   useEffect(() => saveJSON('chantVolume', chantVolume), [chantVolume]);
   useEffect(() => saveJSON('silenceMin', silenceMin), [silenceMin]);
 
@@ -160,7 +158,7 @@ export default function App() {
         ref={chantPlayerRef}
         videoId={chantId}
         isActive={chantActive}
-        muted={chantMuted}
+        muted={chantVolume === 0}
         volume={chantVolume}
         onNeedsTap={setNeedsTap}
       />
@@ -217,8 +215,6 @@ export default function App() {
           onReset={session.reset}
           bellMuted={bellMuted}
           onToggleBell={() => setBellMuted((value) => !value)}
-          chantMuted={chantMuted}
-          onToggleChant={() => setChantMuted((value) => !value)}
           chantVolume={chantVolume}
           onChantVolume={setChantVolume}
         />
