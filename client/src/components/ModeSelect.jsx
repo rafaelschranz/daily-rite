@@ -31,7 +31,6 @@ export default function ModeSelect({
         <h1 className="verse-serif" style={{ fontSize: 34, fontWeight: 500, margin: '0 0 8px' }}>
           Silentium
         </h1>
-        <p style={{ color: 'var(--text-muted)', fontSize: 14, margin: 0 }}>Innehalten, Taizé-Gebet</p>
         {jahreslosung && (
           <p
             className="verse-serif"
