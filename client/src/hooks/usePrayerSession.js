@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { buildSteps } from '../data/steps.js';
 
-export function usePrayerSession(mode, { onStepChange, onFinish } = {}) {
-  const steps = useMemo(() => buildSteps(mode), [mode]);
+export function usePrayerSession(mode, { silenceSeconds = 180, onStepChange, onFinish } = {}) {
+  const steps = useMemo(() => buildSteps(mode, silenceSeconds), [mode, silenceSeconds]);
+  const totalDuration = useMemo(() => steps.reduce((sum, s) => sum + s.duration, 0), [steps]);
 
   const [stepIndex, setStepIndex] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(steps[0].duration);
@@ -89,6 +90,7 @@ export function usePrayerSession(mode, { onStepChange, onFinish } = {}) {
     hasStarted,
     isFinished,
     elapsedTotal,
+    totalDuration,
     start,
     pause,
     reset,

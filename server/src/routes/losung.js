@@ -23,7 +23,8 @@ function extractVerse(verseBlock, referenceBlock) {
 // Robustes DOM-Parsing statt String-Splitting: Der Textblock in #jerky p ist durch
 // <br>-Tags gegliedert. Nach der Datumszeile folgen Losung (AT, <b>) + Bibelstelle,
 // dann Lehrtext (NT, <b>) + Bibelstelle – vorn die Losung, hinten der Lehrtext.
-function parseLosungPage(html) {
+// Exportiert für den Parser-Test mit HTML-Fixture (server/test/).
+export function parseLosungPage(html) {
   const $ = cheerio.load(html);
   const container = $('#jerky p').first();
   if (!container.length) return null;
@@ -39,7 +40,14 @@ function parseLosungPage(html) {
   const lehrtext = extractVerse(blocks[blocks.length - 2], blocks[blocks.length - 1]);
 
   if (!losung && !lehrtext) return null;
-  return { losung, lehrtext };
+
+  // Die Jahreslosung steht im Seitenkopf (h2), z.B. "Jahreslosung 2026:<br>Gott spricht: ..."
+  // <br> vor dem Text-Extrahieren durch Leerzeichen ersetzen, sonst kleben die Teile zusammen.
+  const headlineHtml = ($('h2 font').first().html() || '').replace(/<br\s*\/?>/gi, ' ');
+  const headline = cheerio.load(`<div>${headlineHtml}</div>`)('div').text().replace(/\s+/g, ' ').trim();
+  const jahreslosung = headline.startsWith('Jahreslosung') ? headline : null;
+
+  return { losung, lehrtext, jahreslosung };
 }
 
 // Beide Verse stehen auf derselben Seite: einmal fetchen, beides tagesscharf cachen.
@@ -83,4 +91,15 @@ export function getLosungMorgen() {
 // Abend: der Lehrtext (neutestamentlicher Vers).
 export function getLosungAbend() {
   return getLosungVerse('lehrtext', 'abend');
+}
+
+// Jahreslosung für den Startscreen; ohne Fallback – bei Fehler blendet der Client sie aus.
+export async function getJahreslosung() {
+  try {
+    const pair = await getLosungPair();
+    return { text: pair.jahreslosung ?? null };
+  } catch (error) {
+    console.error('[losung] Jahreslosung nicht verfügbar:', error.message);
+    return { text: null };
+  }
 }

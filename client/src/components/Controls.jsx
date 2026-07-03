@@ -10,6 +10,8 @@ export default function Controls({
   onToggleBell,
   chantMuted,
   onToggleChant,
+  chantVolume,
+  onChantVolume,
 }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
@@ -50,6 +52,19 @@ export default function Controls({
         >
           {chantMuted ? <MusicOffIcon /> : <MusicIcon />}
         </button>
+        {!chantMuted && (
+          <input
+            type="range"
+            className="volume-slider"
+            min="0"
+            max="100"
+            step="5"
+            value={chantVolume}
+            onChange={(event) => onChantVolume(Number(event.target.value))}
+            aria-label="Lautstärke des Gesangs"
+            title="Lautstärke des Gesangs"
+          />
+        )}
       </div>
     </div>
   );

@@ -31,3 +31,7 @@ export function fetchLosungMorgen() {
 export function fetchLosungAbend() {
   return fetchVerse('/api/losung-abend', 'cached-losung');
 }
+
+export function fetchJahreslosung() {
+  return fetchVerse('/api/jahreslosung', 'cached-jahreslosung');
+}

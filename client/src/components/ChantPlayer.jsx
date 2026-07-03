@@ -1,7 +1,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { loadYouTubeAPI } from '../lib/youtube.js';
 
-const ChantPlayer = forwardRef(function ChantPlayer({ videoId, isActive, muted, onNeedsTap }, ref) {
+const ChantPlayer = forwardRef(function ChantPlayer({ videoId, isActive, muted, volume = 35, onNeedsTap }, ref) {
   const mountRef = useRef(null);
   const playerRef = useRef(null);
   const failedRef = useRef(false);
@@ -53,8 +53,8 @@ const ChantPlayer = forwardRef(function ChantPlayer({ videoId, isActive, muted, 
 
   useEffect(() => {
     if (!ready) return;
-    playerRef.current?.setVolume?.(muted ? 0 : 35);
-  }, [muted, ready]);
+    playerRef.current?.setVolume?.(muted ? 0 : volume);
+  }, [muted, volume, ready]);
 
   useEffect(() => {
     if (!ready) return undefined;

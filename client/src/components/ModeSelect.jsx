@@ -2,7 +2,18 @@ import chants from '../data/chants.json';
 import Candle from './Candle.jsx';
 import { MoonIcon, SunIcon, SunriseIcon } from './icons.jsx';
 
-export default function ModeSelect({ mode, onModeChange, chantId, onChantChange, onBegin }) {
+const SILENCE_OPTIONS = [3, 5, 10];
+
+export default function ModeSelect({
+  mode,
+  onModeChange,
+  chantId,
+  onChantChange,
+  silenceMin,
+  onSilenceMinChange,
+  jahreslosung,
+  onBegin,
+}) {
   return (
     <main
       style={{
@@ -11,7 +22,7 @@ export default function ModeSelect({ mode, onModeChange, chantId, onChantChange,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 36,
+        gap: 32,
         padding: '32px 24px',
       }}
     >
@@ -20,7 +31,15 @@ export default function ModeSelect({ mode, onModeChange, chantId, onChantChange,
         <h1 className="verse-serif" style={{ fontSize: 34, fontWeight: 500, margin: '0 0 8px' }}>
           Silentium
         </h1>
-        <p style={{ color: 'var(--text-muted)', fontSize: 14, margin: 0 }}>Fünf Minuten Innehalten, Taizé-Gebet</p>
+        <p style={{ color: 'var(--text-muted)', fontSize: 14, margin: 0 }}>Innehalten, Taizé-Gebet</p>
+        {jahreslosung && (
+          <p
+            className="verse-serif"
+            style={{ color: 'var(--text-faint)', fontSize: 15, fontStyle: 'italic', maxWidth: 320, margin: '14px auto 0' }}
+          >
+            {jahreslosung}
+          </p>
+        )}
       </div>
 
       <div style={{ display: 'flex', gap: 8, width: '100%', maxWidth: 340 }} role="group" aria-label="Tageszeit wählen">
@@ -53,7 +72,7 @@ export default function ModeSelect({ mode, onModeChange, chantId, onChantChange,
         </button>
       </div>
 
-      <label style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%', maxWidth: 320, color: 'var(--text-muted)', fontSize: 13 }}>
+      <label style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%', maxWidth: 340, color: 'var(--text-muted)', fontSize: 13 }}>
         Gesang wählen
         <select className="select" value={chantId} onChange={(event) => onChantChange(event.target.value)}>
           {chants.map((chant) => (
@@ -64,9 +83,34 @@ export default function ModeSelect({ mode, onModeChange, chantId, onChantChange,
         </select>
       </label>
 
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%', maxWidth: 340, color: 'var(--text-muted)', fontSize: 13 }}>
+        Stille
+        <div style={{ display: 'flex', gap: 8 }} role="group" aria-label="Dauer der Stille">
+          {SILENCE_OPTIONS.map((minutes) => (
+            <button
+              key={minutes}
+              type="button"
+              className={`pill${silenceMin === minutes ? ' active' : ''}`}
+              onClick={() => onSilenceMinChange(minutes)}
+              aria-pressed={silenceMin === minutes}
+            >
+              {minutes} Min
+            </button>
+          ))}
+        </div>
+      </div>
+
       <button type="button" className="btn btn-primary" onClick={onBegin}>
         Beginnen
       </button>
+
+      <a
+        href="/gebetszeiten.ics"
+        download
+        style={{ color: 'var(--text-faint)', fontSize: 12, textDecoration: 'none' }}
+      >
+        Gebetszeiten für den Kalender (.ics)
+      </a>
     </main>
   );
 }

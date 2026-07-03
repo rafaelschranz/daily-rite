@@ -1,6 +1,6 @@
 import cors from 'cors';
 import express from 'express';
-import { getLosungAbend, getLosungMorgen } from './routes/losung.js';
+import { getJahreslosung, getLosungAbend, getLosungMorgen } from './routes/losung.js';
 import { getTaizeReading } from './routes/taize.js';
 
 // Reine App-Definition ohne listen(): wird lokal von index.js gestartet
@@ -25,6 +25,10 @@ app.get('/api/losung-morgen', async (_req, res) => {
 
 app.get('/api/losung-abend', async (_req, res) => {
   res.json(await getLosungAbend());
+});
+
+app.get('/api/jahreslosung', async (_req, res) => {
+  res.json(await getJahreslosung());
 });
 
 app.get('/api/health', (_req, res) => {

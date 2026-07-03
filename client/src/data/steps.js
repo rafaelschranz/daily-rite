@@ -14,12 +14,12 @@ export const SEGEN = `Der Herr segne dich und behüte dich.
 Der Herr lasse sein Angesicht leuchten über dir und sei dir gnädig.
 Der Herr hebe sein Angesicht über dich und gebe dir Frieden.`;
 
-export function buildSteps(mode) {
+export function buildSteps(mode, silenceSeconds = 180) {
   if (mode === 'morgen') {
     return [
       { id: 'ankommen', kind: 'text', duration: 30, text: 'Komm zur Ruhe an. Ein Atemzug.' },
       { id: 'wort', kind: 'verse', duration: 30, verseType: 'losung-morgen' },
-      { id: 'stille', kind: 'silence', duration: 180, label: 'Stille' },
+      { id: 'stille', kind: 'silence', duration: silenceSeconds, label: 'Stille' },
       { id: 'ausrichtung', kind: 'text', duration: 30, text: 'Was liegt heute vor dir? Halte es ins Licht.' },
       { id: 'vaterunser', kind: 'prayer', duration: 30, label: 'Vaterunser', text: VATERUNSER },
     ];
@@ -29,7 +29,7 @@ export function buildSteps(mode) {
     return [
       { id: 'ankommen', kind: 'text', duration: 30, text: 'Komm zur Ruhe an. Ein Atemzug.' },
       { id: 'wort', kind: 'verse', duration: 30, verseType: 'losung' },
-      { id: 'stille', kind: 'silence', duration: 180, label: 'Stille' },
+      { id: 'stille', kind: 'silence', duration: silenceSeconds, label: 'Stille' },
       { id: 'rueckblick', kind: 'text', duration: 30, text: 'Wofür dankst du? Was gibst du ab?' },
       {
         id: 'segen',
@@ -44,10 +44,8 @@ export function buildSteps(mode) {
   return [
     { id: 'ankommen', kind: 'text', duration: 30, text: 'Komm zur Ruhe an. Ein Atemzug.' },
     { id: 'wort', kind: 'verse', duration: 30, verseType: 'taize' },
-    { id: 'stille', kind: 'silence', duration: 180, label: 'Stille' },
+    { id: 'stille', kind: 'silence', duration: silenceSeconds, label: 'Stille' },
     { id: 'fuerbitte', kind: 'text', duration: 30, text: 'Ein Gedanke, den du Gott hinhältst.' },
     { id: 'vaterunser', kind: 'prayer', duration: 30, label: 'Vaterunser', text: VATERUNSER },
   ];
 }
-
-export const TOTAL_DURATION = 300;

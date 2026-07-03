@@ -46,6 +46,13 @@ Beide Routen cachen erfolgreiche Antworten im Speicher (max. 12 Stunden, zusätz
 - Die Abläufe (Ankommen/Wort/Stille/Ausrichtung-Fürbitte-Rückblick/Vaterunser) sind als reine Daten in `client/src/data/steps.js` definiert; `usePrayerSession` steuert Timer, automatische Übergänge und Countdown.
 - Verse werden beim App-Start und bei jedem "Beginnen" geladen (damit eine tagelang offene App keinen veralteten Vers zeigt) und zusätzlich in `localStorage` gecacht; schlägt der Request zum eigenen Backend fehl (z. B. offline), wird der zuletzt erfolgreich geladene Vers aus `localStorage` verwendet. Ein dezenter Hinweistext erscheint, wenn ein Fallback-Vers angezeigt wird.
 - Während die Gebetszeit läuft, hält ein Screen Wake Lock (`navigator.wakeLock`) das Handy-Display an; Browser ohne Unterstützung ignorieren das still.
+- **PWA:** Ein Service Worker (`vite-plugin-pwa`, Workbox) macht die App vom Homescreen installierbar und cached alle Assets inkl. Google Fonts; `/api`-Aufrufe laufen bewusst immer übers Netz (Offline-Verse kommen aus dem localStorage-Cache).
+- **Stille-Dauer wählbar** (3/5/10 Minuten) auf dem Auswahl-Screen; während der Stille blenden Header und Controls nach ein paar Sekunden aus, ein Tap holt sie zurück.
+- **Atemführung:** Beim Ankommen weitet und verengt sich ein feiner Ring um die Kerze im 6-Sekunden-Zyklus.
+- **Tageszeit-Stimmung:** Morgens wärmt ein Hauch Dämmerungslicht den Hintergrund, abends wird er tiefer nachtblau (`data-mode` auf `<html>`).
+- Beim Phasenwechsel vibriert das Handy dezent (`navigator.vibrate`), zusätzlich zur Glocke; der Gesang hat einen Lautstärkeregler.
+- Die **Jahreslosung** wird von losung.net mitgeparst (`GET /api/jahreslosung`) und auf dem Startscreen gezeigt.
+- `client/public/gebetszeiten.ics` (Download-Link auf dem Startscreen) legt drei tägliche Gebetszeiten (7:00/12:00/21:30, Europe/Berlin) im Kalender an.
 - Der Gesang läuft ausschließlich über einen unsichtbaren offiziellen **YouTube-IFrame-Embed** (siehe unten), gesteuert über die YouTube-IFrame-API (`client/src/lib/youtube.js`, `client/src/components/ChantPlayer.jsx`).
 
 ## Design-Entscheidungen
@@ -85,6 +92,14 @@ Alternative, ganz ohne Root-Setup (zwei Terminals):
 cd server && npm install && npm run dev
 cd client && npm install && npm run dev
 ```
+
+### Tests
+
+```bash
+npm test --prefix server    # Parser-Tests gegen eine gespeicherte losung.net-Fixture
+```
+
+Bricht der Test nach einer HTML-Änderung von losung.net, greift in Produktion automatisch der Fallback – der Test zeigt, dass das Parsing angepasst werden muss.
 
 ### Production-Build (optional)
 

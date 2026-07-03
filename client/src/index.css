@@ -17,6 +17,18 @@
   color-scheme: dark;
 }
 
+/* Tageszeit-Stimmung: morgens ein Hauch Dämmerungswärme, abends tiefer ins Nachtblau. */
+:root[data-mode='morgen'] {
+  --glow-warm: rgba(244, 172, 122, 0.13);
+  --bg-mid: #1d1a27;
+}
+
+:root[data-mode='abend'] {
+  --glow-warm: rgba(244, 193, 122, 0.07);
+  --bg-deep: #0a0c12;
+  --bg-mid: #121623;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -171,6 +183,34 @@ a {
   color: var(--accent-gold);
 }
 
+.pill {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 10px;
+  border: 1px solid var(--surface-border);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.pill:hover {
+  background: var(--surface-hover);
+}
+
+.pill.active {
+  border-color: var(--accent-gold);
+  background: rgba(217, 164, 65, 0.12);
+  color: var(--accent-gold);
+}
+
+.volume-slider {
+  width: 90px;
+  accent-color: var(--accent-gold);
+  cursor: pointer;
+}
+
 .select {
   appearance: none;
   -webkit-appearance: none;
@@ -200,6 +240,17 @@ a {
 }
 
 /* Motion */
+
+/* Während der Stille blenden Header und Controls nach ein paar Sekunden aus;
+   ein Tap auf die Fläche holt sie zurück (siehe App.jsx). */
+.fade-ui {
+  transition: opacity 1.4s ease;
+}
+
+.fade-ui.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
 
 @keyframes step-fade-in {
   from {
