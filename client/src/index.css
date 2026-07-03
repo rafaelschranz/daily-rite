@@ -51,10 +51,18 @@ body {
   font-family: 'Inter', system-ui, sans-serif;
   color: var(--text-primary);
   /* Fallback für Browser ohne "in oklch"-Interpolation (siehe unten). */
-  background: radial-gradient(ellipse 75% 60% at 50% 36%, var(--glow-warm), transparent 68%), radial-gradient(ellipse 120% 90% at 50% 100%, var(--bg-mid), var(--bg-deep));
+  background: radial-gradient(ellipse 100% 85% at 50% 34%, var(--glow-warm), transparent 85%), radial-gradient(ellipse 120% 90% at 50% 100%, var(--bg-mid), var(--bg-deep));
   /* oklch statt sRGB interpolieren, sonst entsteht auf dem Weg zu "transparent" eine
-     leicht gräuliche Zwischenzone; zusätzliche Zwischenstops machen den Schein weicher. */
-  background: radial-gradient(ellipse 75% 60% at 50% 36% in oklch, var(--glow-core) 0%, var(--glow-warm) 32%, transparent 68%),
+     leicht gräuliche Zwischenzone; ein größerer Radius mit sanften Zwischenstops lässt
+     den Schein weit vor dem Rand verklingen, statt sichtbar abzuschneiden. */
+  background: radial-gradient(
+      ellipse 100% 85% at 50% 34% in oklch,
+      var(--glow-core) 0%,
+      var(--glow-warm) 20%,
+      color-mix(in oklch, var(--glow-warm) 40%, transparent) 45%,
+      color-mix(in oklch, var(--glow-warm) 12%, transparent) 68%,
+      transparent 100%
+    ),
     radial-gradient(ellipse 120% 90% at 50% 100% in oklch, var(--bg-mid), var(--bg-deep));
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
