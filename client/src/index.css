@@ -3,6 +3,11 @@
   --bg-mid: #171b28;
   --glow-warm: rgba(244, 193, 122, 0.09);
   --glow-core: rgba(244, 193, 122, 0.16);
+  /* Gleicher Farbton wie --glow-warm, nur Alpha 0 – zum Ausblenden IMMER hierhin
+     fallen lassen statt zu "transparent" (= schwarz mit Alpha 0). Sonst wandert
+     die interpolierte Farbe unterwegs Richtung Schwarz und erzeugt eine sichtbar
+     gräuliche/dunkle Zwischenzone statt eines sauberen Verblassens. */
+  --glow-fade: rgba(244, 193, 122, 0);
   --flame-core: #ffe3ab;
   --flame-mid: #f7b955;
   --flame-outer: #d97b3f;
@@ -22,12 +27,14 @@
 :root[data-mode='morgen'] {
   --glow-warm: rgba(244, 172, 122, 0.13);
   --glow-core: rgba(244, 172, 122, 0.22);
+  --glow-fade: rgba(244, 172, 122, 0);
   --bg-mid: #1d1a27;
 }
 
 :root[data-mode='abend'] {
   --glow-warm: rgba(244, 193, 122, 0.07);
   --glow-core: rgba(244, 193, 122, 0.12);
+  --glow-fade: rgba(244, 193, 122, 0);
   --bg-deep: #0a0c12;
   --bg-mid: #121623;
 }
@@ -50,20 +57,13 @@ body {
   margin: 0;
   font-family: 'Inter', system-ui, sans-serif;
   color: var(--text-primary);
-  /* Fallback für Browser ohne "in oklch"-Interpolation (siehe unten). */
-  background: radial-gradient(ellipse 100% 85% at 50% 34%, var(--glow-warm), transparent 85%), radial-gradient(ellipse 120% 90% at 50% 100%, var(--bg-mid), var(--bg-deep));
-  /* oklch statt sRGB interpolieren, sonst entsteht auf dem Weg zu "transparent" eine
-     leicht gräuliche Zwischenzone; ein größerer Radius mit sanften Zwischenstops lässt
-     den Schein weit vor dem Rand verklingen, statt sichtbar abzuschneiden. */
-  background: radial-gradient(
-      ellipse 100% 85% at 50% 34% in oklch,
-      var(--glow-core) 0%,
-      var(--glow-warm) 20%,
-      color-mix(in oklch, var(--glow-warm) 40%, transparent) 45%,
-      color-mix(in oklch, var(--glow-warm) 12%, transparent) 68%,
-      transparent 100%
-    ),
-    radial-gradient(ellipse 120% 90% at 50% 100% in oklch, var(--bg-mid), var(--bg-deep));
+  /* Verblasst zum eigenen Farbton mit Alpha 0 (--glow-fade), nicht zu "transparent"
+     (= Schwarz mit Alpha 0) – sonst entsteht unterwegs eine gräuliche Zwischenzone.
+     Ganz bewusst ohne exotische Gradient-Syntax: nur breit unterstützte rgba-Stops,
+     damit der Verlauf in jedem Browser gleich aussieht. Maßvolle Größe, damit die
+     Wärme ein Akzent bleibt statt den ganzen Bildschirm einzufärben. */
+  background: radial-gradient(ellipse 65% 50% at 50% 36%, var(--glow-core) 0%, var(--glow-warm) 38%, var(--glow-fade) 75%),
+    radial-gradient(ellipse 120% 90% at 50% 100%, var(--bg-mid), var(--bg-deep));
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
 }

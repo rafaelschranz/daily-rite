@@ -36,30 +36,17 @@
 
 .candle-glow {
   position: absolute;
-  width: 440px;
-  height: 440px;
+  width: 300px;
+  height: 300px;
   border-radius: 50%;
-  top: -148px;
+  top: -78px;
   left: 50%;
   transform: translateX(-50%);
-  /* Additiv statt als eigene Scheibe überlagern: verschmilzt nahtlos mit dem
-     Seiten-Hintergrund dahinter, ohne dass am Rand ein Kreis sichtbar wird. */
-  mix-blend-mode: screen;
-  /* Fallback für Browser ohne "in oklch"-Interpolation (siehe unten). */
-  background: radial-gradient(circle, var(--glow-warm) 0%, transparent 65%);
-  /* oklch statt sRGB interpolieren, sonst entsteht auf dem Weg zu "transparent" eine
-     leicht gräuliche Zwischenzone; viele sanfte Zwischenstops und ein großer Radius
-     sorgen dafür, dass der Verlauf schon lange vor dem Rand unsichtbar ausläuft. */
-  background: radial-gradient(
-    circle in oklch,
-    var(--glow-core) 0%,
-    var(--glow-warm) 16%,
-    color-mix(in oklch, var(--glow-warm) 55%, transparent) 32%,
-    color-mix(in oklch, var(--glow-warm) 22%, transparent) 50%,
-    color-mix(in oklch, var(--glow-warm) 6%, transparent) 70%,
-    transparent 100%
-  );
-  filter: blur(6px);
+  /* Verblasst zum eigenen Farbton mit Alpha 0 (--glow-fade), nicht zu "transparent"
+     (= Schwarz mit Alpha 0) – sonst entsteht unterwegs eine gräuliche Zwischenzone.
+     Nur breit unterstützte rgba-Stops, damit es in jedem Browser gleich aussieht. */
+  background: radial-gradient(circle, var(--glow-core) 0%, var(--glow-warm) 35%, var(--glow-fade) 82%);
+  filter: blur(3px);
   transition: opacity 1.2s ease;
   pointer-events: none;
 }
