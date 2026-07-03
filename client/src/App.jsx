@@ -43,8 +43,8 @@ export default function App() {
   const [losungMorgen, setLosungMorgen] = useState(undefined);
   const [jahreslosung, setJahreslosung] = useState(null);
 
-  // UI-Ausblenden während der Stille: nach ein paar Sekunden verschwinden
-  // Header und Controls; ein Tap auf die Fläche holt sie zurück.
+  // Fokus-Modus: In jedem laufenden Schritt verschwinden Header und Controls nach
+  // ein paar Sekunden von selbst; ein Tap auf die Fläche holt sie kurz zurück.
   const [uiHidden, setUiHidden] = useState(false);
   const [revealTick, setRevealTick] = useState(0);
 
@@ -93,14 +93,14 @@ export default function App() {
   const isSilence = session.step.kind === 'silence';
   const silenceRunning = isSilence && session.isRunning;
 
+  // Bei jedem Schrittwechsel bzw. Start/Tap zunächst sichtbar, dann nach 5s
+  // wieder ausblenden – außer der Gesang wartet gerade auf einen Tap zum Start.
   useEffect(() => {
-    if (!silenceRunning || needsTap) {
-      setUiHidden(false);
-      return undefined;
-    }
+    setUiHidden(false);
+    if (!session.isRunning || needsTap) return undefined;
     const timer = setTimeout(() => setUiHidden(true), 5000);
     return () => clearTimeout(timer);
-  }, [silenceRunning, needsTap, revealTick]);
+  }, [session.isRunning, session.stepIndex, needsTap, revealTick]);
 
   if (screen === 'select') {
     return (
@@ -141,7 +141,7 @@ export default function App() {
   return (
     <main
       onPointerDown={() => {
-        if (!silenceRunning) return;
+        if (!session.isRunning) return;
         setUiHidden(false);
         setRevealTick((tick) => tick + 1);
       }}
