@@ -1,7 +1,13 @@
 import Candle from './Candle.jsx';
 
+const CLOSINGS = {
+  morgen: 'Geh gesegnet in den Tag.',
+  mittag: 'Ein gesegneter Tag.',
+  abend: 'Eine gute Nacht.',
+};
+
 export default function FinishedView({ mode, onRestart }) {
-  const closing = mode === 'abend' ? 'Eine gute Nacht.' : 'Ein gesegneter Tag.';
+  const closing = CLOSINGS[mode] ?? CLOSINGS.mittag;
 
   return (
     <main

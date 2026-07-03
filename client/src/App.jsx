@@ -11,11 +11,15 @@ import { TOTAL_DURATION } from './data/steps.js';
 import { useBell } from './hooks/useBell.js';
 import { usePrayerSession } from './hooks/usePrayerSession.js';
 import { useWakeLock } from './hooks/useWakeLock.js';
-import { fetchLosungAbend, fetchTaizeReading } from './lib/api.js';
+import { fetchLosungAbend, fetchLosungMorgen, fetchTaizeReading } from './lib/api.js';
 import { loadJSON, saveJSON } from './lib/storage.js';
 
+const MODE_LABELS = { morgen: 'Morgen', mittag: 'Mittag', abend: 'Abend' };
+
 function suggestMode() {
-  return new Date().getHours() < 15 ? 'mittag' : 'abend';
+  const hour = new Date().getHours();
+  if (hour < 11) return 'morgen';
+  return hour < 15 ? 'mittag' : 'abend';
 }
 
 function weekdayChantId() {
@@ -36,9 +40,11 @@ export default function App() {
   // undefined = lädt noch, null = endgültig fehlgeschlagen (siehe api.js).
   const [taize, setTaize] = useState(undefined);
   const [losung, setLosung] = useState(undefined);
+  const [losungMorgen, setLosungMorgen] = useState(undefined);
 
   const loadVerses = useCallback(() => {
     fetchTaizeReading().then(setTaize);
+    fetchLosungMorgen().then(setLosungMorgen);
     fetchLosungAbend().then(setLosung);
   }, []);
 
@@ -88,10 +94,11 @@ export default function App() {
     );
   }
 
-  const verse = session.step.verseType === 'taize' ? taize : session.step.verseType === 'losung' ? losung : null;
+  const verseByType = { taize, losung, 'losung-morgen': losungMorgen };
+  const verse = session.step.verseType ? verseByType[session.step.verseType] : null;
   const isSilence = session.step.kind === 'silence';
   const chantActive = isSilence && session.isRunning;
-  const modeLabel = mode === 'abend' ? 'Abend' : 'Mittag';
+  const modeLabel = MODE_LABELS[mode] ?? 'Mittag';
 
   return (
     <main

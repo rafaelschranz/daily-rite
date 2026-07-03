@@ -1,6 +1,6 @@
 # Silentium
 
-Eine ruhige, klosterhafte 5-Minuten-Taizé-Gebetsapp für Mittag und Abend. Vite + React im Frontend, ein minimaler Express-Server im Backend (für das serverseitige Fetchen und Parsen der beiden externen Tagesverse).
+Eine ruhige, klosterhafte 5-Minuten-Taizé-Gebetsapp für Morgen, Mittag und Abend. Vite + React im Frontend, ein minimaler Express-Server im Backend (für das serverseitige Fetchen und Parsen der beiden externen Tagesverse).
 
 ## Architektur
 
@@ -11,7 +11,7 @@ daily-rite/
       index.js             App-Setup, Routen, optionales Static-Serving für client/dist
       routes/
         taize.js            GET /api/taize-reading – RSS-Feed, XML-Parsing mit cheerio
-        losung.js            GET /api/losung-abend – HTML-Parsing mit cheerio (ISO-8859-1)
+        losung.js            GET /api/losung-morgen & /api/losung-abend – HTML-Parsing mit cheerio (ISO-8859-1)
       lib/
         cache.js             In-Memory-Cache mit TTL (12h)
         fetchWithTimeout.js  fetch mit AbortController-Timeout
@@ -24,7 +24,7 @@ daily-rite/
       components/            Candle, ChantPlayer, Controls, ProgressDots, StepView, ...
       hooks/                  usePrayerSession (Timer/Schritte), useBell (Web Audio API)
       data/
-        steps.js              Ablauf für Mittag/Abend, Vaterunser- & Segenstext
+        steps.js              Abläufe für Morgen/Mittag/Abend, Vaterunser- & Segenstext
         chants.json            Taizé-Gesänge (YouTube-IDs)
       lib/
         api.js                 Fetch-Client mit localStorage-Offline-Fallback
@@ -35,15 +35,15 @@ daily-rite/
 
 - `GET /api/taize-reading` → `{ date, text, reference, source }`
   Holt den RSS-Feed `archives.taize.fr/readingrss.php?lang=de`, parst das erste `<item>` mit cheerio (XML-Modus). Bibelstelle wird aus der Klammer am Ende der `<description>` extrahiert. Fällt automatisch auf `lang=en` zurück, wenn der deutsche Feed leer ist oder (heuristisch erkannt) unerwartet nicht-deutschen Text enthält.
-- `GET /api/losung-abend` → `{ date, text, reference, source }`
-  Holt `losung.net/?t=&m=&j=` (aktuelles Datum), dekodiert die Antwort korrekt als **ISO-8859-1** und parst den Textblock in `#jerky p` strukturell: Der Inhalt wird an den `<br>`-Tags in Blöcke zerlegt, die beiden letzten Blöcke sind Lehrtext (`<b>…</b>`) und seine Bibelstelle – kein blindes String-Splitting, sondern DOM-basiertes Parsing.
+- `GET /api/losung-morgen` und `GET /api/losung-abend` → `{ date, text, reference, source }`
+  Holen `losung.net/?t=&m=&j=` (aktuelles Datum, ein gemeinsamer Fetch + Cache für beide), dekodieren die Antwort korrekt als **ISO-8859-1** und parsen den Textblock in `#jerky p` strukturell: Der Inhalt wird an den `<br>`-Tags in Blöcke zerlegt; vorn stehen Losung (AT, `<b>…</b>`) + Bibelstelle, hinten Lehrtext (NT) + Bibelstelle – kein blindes String-Splitting, sondern DOM-basiertes Parsing. Morgens wird die Losung ausgeliefert (traditionell das Morgenwort), abends der Lehrtext.
 
 Beide Routen cachen erfolgreiche Antworten im Speicher (max. 12 Stunden, zusätzlich tagesscharf: der Cache-Schlüssel enthält das Datum in Europe/Berlin, sodass um Mitternacht nie der Vers von gestern ausgeliefert wird). Sie haben ein 8-Sekunden-Timeout und fallen bei jedem Fehler (Timeout, HTTP-Fehler, Parsing-Fehler) auf `server/data/verses.json` zurück, rotierend nach Wochentag. `source` im Response ist `"live"` oder `"fallback"`. Sämtliche Datumslogik (URL-Parameter, Anzeigedatum, Wochentagsrotation) rechnet bewusst in Europe/Berlin, unabhängig von der Server-Zeitzone.
 
 ### Frontend
 
 - Vite-Dev-Server auf Port 5173, proxied `/api/*` auf `http://localhost:3001` (siehe `client/vite.config.js`) – im Dev-Betrieb also keine CORS-Konfiguration nötig.
-- Der Ablauf (Ankommen/Wort/Stille/Fürbitte-Rückblick/Vaterunser) ist als reine Daten in `client/src/data/steps.js` definiert; `usePrayerSession` steuert Timer, automatische Übergänge und Countdown.
+- Die Abläufe (Ankommen/Wort/Stille/Ausrichtung-Fürbitte-Rückblick/Vaterunser) sind als reine Daten in `client/src/data/steps.js` definiert; `usePrayerSession` steuert Timer, automatische Übergänge und Countdown.
 - Verse werden beim App-Start und bei jedem "Beginnen" geladen (damit eine tagelang offene App keinen veralteten Vers zeigt) und zusätzlich in `localStorage` gecacht; schlägt der Request zum eigenen Backend fehl (z. B. offline), wird der zuletzt erfolgreich geladene Vers aus `localStorage` verwendet. Ein dezenter Hinweistext erscheint, wenn ein Fallback-Vers angezeigt wird.
 - Während die Gebetszeit läuft, hält ein Screen Wake Lock (`navigator.wakeLock`) das Handy-Display an; Browser ohne Unterstützung ignorieren das still.
 - Der Gesang läuft ausschließlich über einen unsichtbaren offiziellen **YouTube-IFrame-Embed** (siehe unten), gesteuert über die YouTube-IFrame-API (`client/src/lib/youtube.js`, `client/src/components/ChantPlayer.jsx`).

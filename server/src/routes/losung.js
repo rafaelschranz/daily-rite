@@ -11,9 +11,18 @@ function decodeLatin1(buffer) {
   return new TextDecoder('iso-8859-1').decode(buffer);
 }
 
+function extractVerse(verseBlock, referenceBlock) {
+  const $verse = cheerio.load(`<div>${verseBlock}</div>`);
+  const boldText = $verse('b').first().text().trim();
+  const text = boldText || $verse('div').text().trim();
+  const reference = cheerio.load(`<div>${referenceBlock}</div>`)('div').text().trim();
+  if (!text || !reference) return null;
+  return { text, reference };
+}
+
 // Robustes DOM-Parsing statt String-Splitting: Der Textblock in #jerky p ist durch
-// <br>-Tags gegliedert; die beiden fettgedruckten <b>-Verse sind Losung (AT) und
-// Lehrtext (NT), gefolgt jeweils von ihrer Bibelstelle als eigener Block.
+// <br>-Tags gegliedert. Nach der Datumszeile folgen Losung (AT, <b>) + Bibelstelle,
+// dann Lehrtext (NT, <b>) + Bibelstelle – vorn die Losung, hinten der Lehrtext.
 function parseLosungPage(html) {
   const $ = cheerio.load(html);
   const container = $('#jerky p').first();
@@ -24,47 +33,54 @@ function parseLosungPage(html) {
     .map((block) => block.trim())
     .filter(Boolean);
 
-  if (blocks.length < 2) return null;
+  if (blocks.length < 5) return null;
 
-  const lehrtextBlock = blocks[blocks.length - 2];
-  const referenceBlock = blocks[blocks.length - 1];
+  const losung = extractVerse(blocks[1], blocks[2]);
+  const lehrtext = extractVerse(blocks[blocks.length - 2], blocks[blocks.length - 1]);
 
-  const $lehrtext = cheerio.load(`<div>${lehrtextBlock}</div>`);
-  const boldText = $lehrtext('b').first().text().trim();
-  const text = boldText || $lehrtext('div').text().trim();
-
-  const reference = cheerio.load(`<div>${referenceBlock}</div>`)('div').text().trim();
-
-  if (!text || !reference) return null;
-  return { text, reference };
+  if (!losung && !lehrtext) return null;
+  return { losung, lehrtext };
 }
 
-export async function getLosungAbend() {
-  // Datum in Berliner Zeit bestimmen, damit URL und Anzeigedatum um Mitternacht
-  // gemeinsam umschlagen; der datumsbasierte Schlüssel macht den Cache zusätzlich
-  // tagesscharf (kein gestriger Vers am Morgen danach).
+// Beide Verse stehen auf derselben Seite: einmal fetchen, beides tagesscharf cachen.
+async function getLosungPair() {
   const today = berlinToday();
-  const cacheKey = `losung-abend:${today.isoDate}`;
+  const cacheKey = `losung-pair:${today.isoDate}`;
 
   const cached = getCached(cacheKey);
   if (cached) return cached;
 
   const url = `https://losung.net/?t=${today.day}&m=${today.month}&j=${today.year}`;
-  const date = formatDisplayDate();
+  const response = await fetchWithTimeout(url, { timeoutMs: 8000 });
+  const buffer = await response.arrayBuffer();
+  const html = decodeLatin1(buffer);
+  const parsed = parseLosungPage(html);
 
+  if (!parsed) throw new Error('Losung/Lehrtext konnten nicht aus der Seite extrahiert werden');
+
+  const result = { date: formatDisplayDate(), ...parsed };
+  setCached(cacheKey, result, TTL_MS);
+  return result;
+}
+
+async function getLosungVerse(part, fallbackType) {
   try {
-    const response = await fetchWithTimeout(url, { timeoutMs: 8000 });
-    const buffer = await response.arrayBuffer();
-    const html = decodeLatin1(buffer);
-    const parsed = parseLosungPage(html);
-
-    if (!parsed) throw new Error('Lehrtext konnte nicht aus der Seite extrahiert werden');
-
-    const result = { date, text: parsed.text, reference: parsed.reference, source: 'live' };
-    setCached(cacheKey, result, TTL_MS);
-    return result;
+    const pair = await getLosungPair();
+    const verse = pair[part];
+    if (!verse) throw new Error(`${part} fehlt auf der Seite`);
+    return { date: pair.date, text: verse.text, reference: verse.reference, source: 'live' };
   } catch (error) {
-    console.error('[losung] Live-Seite fehlgeschlagen, nutze Fallback:', error.message);
-    return getFallback('abend');
+    console.error(`[losung] Live-Seite fehlgeschlagen (${part}), nutze Fallback:`, error.message);
+    return getFallback(fallbackType);
   }
+}
+
+// Morgen: die Losung (alttestamentlicher Vers) – traditionell das Morgenwort.
+export function getLosungMorgen() {
+  return getLosungVerse('losung', 'morgen');
+}
+
+// Abend: der Lehrtext (neutestamentlicher Vers).
+export function getLosungAbend() {
+  return getLosungVerse('lehrtext', 'abend');
 }

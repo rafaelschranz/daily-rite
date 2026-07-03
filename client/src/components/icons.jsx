@@ -52,6 +52,17 @@ export function MusicOffIcon(props) {
   );
 }
 
+export function SunriseIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M12 2v6M8.5 5.5 12 2l3.5 3.5" />
+      <path d="M4.9 12.9l1.4 1.4M2 18h2M20 18h2M17.7 14.3l1.4-1.4" />
+      <path d="M8 18a4 4 0 0 1 8 0" />
+      <path d="M3 22h18" />
+    </svg>
+  );
+}
+
 export function SunIcon(props) {
   return (
     <svg {...base} {...props}>

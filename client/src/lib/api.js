@@ -24,6 +24,10 @@ export function fetchTaizeReading() {
   return fetchVerse('/api/taize-reading', 'cached-taize');
 }
 
+export function fetchLosungMorgen() {
+  return fetchVerse('/api/losung-morgen', 'cached-losung-morgen');
+}
+
 export function fetchLosungAbend() {
   return fetchVerse('/api/losung-abend', 'cached-losung');
 }

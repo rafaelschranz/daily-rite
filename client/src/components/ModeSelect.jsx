@@ -1,6 +1,6 @@
 import chants from '../data/chants.json';
 import Candle from './Candle.jsx';
-import { MoonIcon, SunIcon } from './icons.jsx';
+import { MoonIcon, SunIcon, SunriseIcon } from './icons.jsx';
 
 export default function ModeSelect({ mode, onModeChange, chantId, onChantChange, onBegin }) {
   return (
@@ -23,7 +23,16 @@ export default function ModeSelect({ mode, onModeChange, chantId, onChantChange,
         <p style={{ color: 'var(--text-muted)', fontSize: 14, margin: 0 }}>Fünf Minuten Innehalten, Taizé-Gebet</p>
       </div>
 
-      <div style={{ display: 'flex', gap: 12, width: '100%', maxWidth: 320 }} role="group" aria-label="Tageszeit wählen">
+      <div style={{ display: 'flex', gap: 8, width: '100%', maxWidth: 340 }} role="group" aria-label="Tageszeit wählen">
+        <button
+          type="button"
+          className={`mode-btn${mode === 'morgen' ? ' active' : ''}`}
+          onClick={() => onModeChange('morgen')}
+          aria-pressed={mode === 'morgen'}
+        >
+          <SunriseIcon width={16} height={16} />
+          Morgen
+        </button>
         <button
           type="button"
           className={`mode-btn${mode === 'mittag' ? ' active' : ''}`}

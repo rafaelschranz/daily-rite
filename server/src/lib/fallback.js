@@ -7,7 +7,7 @@ const versesUrl = new URL('../../data/verses.json', import.meta.url);
 const verses = JSON.parse(readFileSync(versesUrl, 'utf-8'));
 
 export function getFallback(type) {
-  const list = type === 'mittag' ? verses.mittag_fallback : verses.abend_fallback;
+  const list = verses[`${type}_fallback`] ?? verses.mittag_fallback;
   const entry = list[berlinToday().weekday % list.length];
 
   return {

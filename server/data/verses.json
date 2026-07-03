@@ -1,4 +1,34 @@
 {
+  "morgen_fallback": [
+    {
+      "text": "Der Tag liegt noch ungeöffnet vor dir. Geh hinein im Vertrauen, dass du nicht allein gehst.",
+      "reference": "frei nach Psalm 143"
+    },
+    {
+      "text": "Jeden Morgen ist die Treue neu. Was gestern war, muss heute nicht mehr tragen.",
+      "reference": "frei nach Klagelieder 3"
+    },
+    {
+      "text": "Noch bevor du das erste Wort sprichst, bist du schon gesehen und gemeint.",
+      "reference": "frei nach Psalm 139"
+    },
+    {
+      "text": "Bitte um ein hörendes Herz für diesen Tag – mehr brauchst du nicht in der Hand.",
+      "reference": "frei nach 1. Könige 3"
+    },
+    {
+      "text": "Wie das Licht am Morgen wächst, so darf auch dein Vertrauen langsam wach werden.",
+      "reference": "frei nach Sprüche 4"
+    },
+    {
+      "text": "Stell den heutigen Tag in ein größeres Licht: Nicht alles hängt an dir.",
+      "reference": "frei nach Psalm 127"
+    },
+    {
+      "text": "Am Morgen der Woche ein leiser Anfang: Es genügt, den ersten Schritt zu sehen.",
+      "reference": "frei nach Psalm 119"
+    }
+  ],
   "mittag_fallback": [
     {
       "text": "Am siebten Tag darf auch die Seele ruhen. Mitten am Tag ein Innehalten, ein Blick zum Licht.",
