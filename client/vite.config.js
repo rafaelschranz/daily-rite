@@ -7,6 +7,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      // Wir registrieren manuell in main.jsx (mit Auto-Reload bei neuer Version),
+      // statt das Standard-Skript ohne Update-Erkennung injizieren zu lassen.
+      injectRegister: false,
       // Eigenes site.webmanifest bleibt die Quelle (in index.html verlinkt).
       manifest: false,
       workbox: {
