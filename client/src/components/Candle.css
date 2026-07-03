@@ -9,7 +9,9 @@
 }
 
 /* Atemführung beim Ankommen: ein Ring um die Kerze weitet und verengt sich
-   im ruhigen 6s-Zyklus – Einladung, den Atem daran auszurichten. */
+   im ruhigen 6s-Zyklus – Einladung, den Atem daran auszurichten. Als weiches
+   Verlaufsband statt einer scharfen Linie, damit er nicht wie ein harter
+   Kreis gegen den ansonsten überall weichen Schein wirkt. */
 .breath-ring {
   position: absolute;
   width: 210px;
@@ -17,7 +19,16 @@
   border-radius: 50%;
   top: -36px;
   left: 50%;
-  border: 1px solid rgba(217, 164, 65, 0.35);
+  background: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 57%,
+    rgba(217, 164, 65, 0.22) 61%,
+    rgba(217, 164, 65, 0.22) 63%,
+    transparent 68%,
+    transparent 100%
+  );
+  filter: blur(2.5px);
   animation: breath-guide 6s ease-in-out infinite;
   pointer-events: none;
 }
@@ -26,11 +37,11 @@
   0%,
   100% {
     transform: translateX(-50%) scale(0.78);
-    opacity: 0.25;
+    opacity: 0.3;
   }
   50% {
     transform: translateX(-50%) scale(1.06);
-    opacity: 0.6;
+    opacity: 0.75;
   }
 }
 
